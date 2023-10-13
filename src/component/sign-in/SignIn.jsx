@@ -1,4 +1,4 @@
-import React , {useState} from "react";
+import React , {useState, useContext} from "react";
 import {
     createUserWithEmailAndPassword ,
     createUserDocumentFromAuth,
@@ -8,6 +8,7 @@ import {
 import InputForm from '../InputForm/InputForm'
 import './signin.scss'
 import Button from "../button/Button";
+import { UserContext } from "../../contexts/UserContext";
 
 const DefaultFormFields = {
     email: '',
@@ -17,9 +18,11 @@ const DefaultFormFields = {
 
 const SignIn = () =>{
 
-    const [formfield , setformfield] = useState(DefaultFormFields)
+    const [formfield , setformfield] = useState(DefaultFormFields);
 
-    const {email,password,} = formfield
+    const {email,password,} = formfield;
+
+    const {setCurrentUser} = useContext(UserContext);
 
     const logGoogleUser = async () =>{
         const {user} = await signInWithGooglePopup();
@@ -33,8 +36,8 @@ const SignIn = () =>{
 
         try{
             
-            const response = await signInAuthUserWithEmailAndPassword(email,password);
-            console.log(response);
+            const {user} = await signInAuthUserWithEmailAndPassword(email,password);
+            setCurrentUser(user); 
 
         }catch(error){
             if(error.code === 'auth/invalid-login-credentials'){
